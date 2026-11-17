@@ -1,0 +1,3 @@
+PASS: final packaging rejects missing recordings and YouTube links.
+Video materials pending: videos/main.mp4, main_youtube_url in config/submission.json, videos/bonus.mp4, bonus_youtube_url in config/submission.json
+Final packaging refused: add the recordings and YouTube links first.

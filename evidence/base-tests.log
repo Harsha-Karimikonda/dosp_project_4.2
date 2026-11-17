@@ -1,0 +1,59 @@
+======================== EUnit ========================
+module 'reddit_tests'
+  reddit_tests: registration_test...[0.006 s] ok
+  reddit_tests: membership_test...ok
+  reddit_tests: nested_comments_test...ok
+  reddit_tests: vote_karma_test...ok
+  reddit_tests: feed_pagination_test...ok
+  reddit_tests: feed_multiple_communities_test...ok
+  reddit_tests: repost_test...ok
+  reddit_tests: messaging_privacy_test...ok
+  reddit_tests: disconnect_test...ok
+  reddit_tests: invalid_text_test...ok
+  reddit_tests: malformed_request_test...ok
+  [done in 0.039 s]
+module 'reddit_rest_tests'
+  reddit_rest_tests: search_and_detail_test...ok
+  reddit_rest_tests: http_checks...HTTP id=1 method=POST path=/api/v1/users user= status=201 elapsed_us=25
+HTTP id=2 method=POST path=/api/v1/users user= status=409 elapsed_us=10
+HTTP id=3 method=POST path=/api/v1/users user= status=201 elapsed_us=11
+HTTP id=4 method=GET path=/api/v1/feed user= status=400 elapsed_us=2
+HTTP id=5 method=POST path=/api/v1/subreddits user=alice status=201 elapsed_us=10
+HTTP id=6 method=POST path=/api/v1/posts user=bob status=403 elapsed_us=10
+HTTP id=7 method=PUT path=/api/v1/subreddits/erlang/subscription user=bob status=200 elapsed_us=6
+HTTP id=8 method=POST path=/api/v1/posts user=alice status=201 elapsed_us=9
+HTTP id=9 method=GET path=/api/v1/posts/1 user=bob status=200 elapsed_us=9
+HTTP id=10 method=PUT path=/api/v1/posts/1/vote user=bob status=200 elapsed_us=6
+HTTP id=11 method=GET path=/api/v1/users/alice/karma user=bob status=200 elapsed_us=6
+HTTP id=12 method=PUT path=/api/v1/posts/1/vote user=alice status=403 elapsed_us=5
+HTTP id=13 method=POST path=/api/v1/posts/1/comments user=bob status=201 elapsed_us=8
+HTTP id=14 method=POST path=/api/v1/posts/1/comments user=alice status=201 elapsed_us=14
+HTTP id=15 method=GET path=/api/v1/posts/1/comments user=bob status=200 elapsed_us=8
+HTTP id=16 method=GET path=/api/v1/search?q=REST user=bob status=200 elapsed_us=11
+HTTP id=17 method=GET path=/api/v1/feed?before=1 user=bob status=200 elapsed_us=7
+HTTP id=18 method=GET path=/api/v1/feed?limit=101 user=bob status=400 elapsed_us=5
+HTTP id=19 method=GET path=/api/v1/posts/nope user=bob status=400 elapsed_us=5
+HTTP id=20 method=GET path=/api/v1/posts/9999 user=bob status=404 elapsed_us=4
+HTTP id=21 method=PUT path=/api/v1/feed user=bob status=405 elapsed_us=1
+HTTP id=22 method=GET path=/api/v1/nothing user=bob status=404 elapsed_us=2
+HTTP id=23 method=PUT path=/api/v1/users/bob/online user=bob status=200 elapsed_us=6
+HTTP id=24 method=GET path=/api/v1/feed user=bob status=403 elapsed_us=3
+HTTP id=25 method=POST path=/api/v1/messages user=alice status=201 elapsed_us=8
+HTTP id=26 method=PUT path=/api/v1/users/bob/online user=bob status=200 elapsed_us=5
+HTTP id=27 method=GET path=/api/v1/inbox user=bob status=200 elapsed_us=4
+HTTP id=28 method=GET path=/api/v1/inbox user=alice status=200 elapsed_us=3
+HTTP id=29 method=POST path=/api/v1/messages/4/replies user=bob status=201 elapsed_us=6
+HTTP id=30 method=POST path=/api/v1/messages/4/replies user=alice status=403 elapsed_us=4
+HTTP id=31 method=POST path=/api/v1/posts user=alice status=400 elapsed_us=2
+HTTP id=32 method=GET path=/api/v1/feed user=bob status=200 elapsed_us=7
+HTTP id=33 method=GET path=/api/v1/feed user=bob status=504 elapsed_us=5000997
+=INFO REPORT==== 17-Nov-2026::13:03:52.869370 ===
+    application: reddit
+    exited: stopped
+    type: temporary
+
+HTTP id=35 method=GET path=/api/v1/feed user=bob status=503 elapsed_us=27
+[5.091 s] ok
+  [done in 5.097 s]
+=======================================================
+  All 13 tests passed.

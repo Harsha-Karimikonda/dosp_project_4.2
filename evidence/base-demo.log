@@ -1,0 +1,140 @@
+CLIENT_PROCESS os_pid=80645 user=alice command=["register","alice"]
+CLIENT POST http://127.0.0.1:56903/api/v1/users user=alice
+HTTP id=1 method=POST path=/api/v1/users user=alice status=201 elapsed_us=755
+CLIENT status=201 body={"data":{"ok":true},"request_id":"1"}
+{"status":201,"response":{"data":{"ok":true},"request_id":"1"}}
+CLIENT_PROCESS os_pid=80663 user=bob command=["register","bob"]
+CLIENT POST http://127.0.0.1:56903/api/v1/users user=bob
+HTTP id=3 method=POST path=/api/v1/users user=bob status=201 elapsed_us=25
+CLIENT status=201 body={"data":{"ok":true},"request_id":"3"}
+{"status":201,"response":{"data":{"ok":true},"request_id":"3"}}
+CLIENT_PROCESS os_pid=80679 user=alice command=["create","erlang"]
+CLIENT POST http://127.0.0.1:56903/api/v1/subreddits user=alice
+HTTP id=5 method=POST path=/api/v1/subreddits user=alice status=201 elapsed_us=24
+CLIENT status=201 body={"data":{"ok":true},"request_id":"5"}
+{"status":201,"response":{"data":{"ok":true},"request_id":"5"}}
+CLIENT_PROCESS os_pid=80694 user=bob command=["join","erlang"]
+CLIENT PUT http://127.0.0.1:56903/api/v1/subreddits/erlang/subscription user=bob
+HTTP id=7 method=PUT path=/api/v1/subreddits/erlang/subscription user=bob status=200 elapsed_us=36
+CLIENT status=200 body={"data":{"ok":true},"request_id":"7"}
+{"status":200,"response":{"data":{"ok":true},"request_id":"7"}}
+CLIENT_PROCESS os_pid=80709 user=alice command=["communities"]
+CLIENT GET http://127.0.0.1:56903/api/v1/subreddits user=alice
+HTTP id=9 method=GET path=/api/v1/subreddits user=alice status=200 elapsed_us=34
+CLIENT status=200 body={"data":{"communities":[{"name":"erlang","members":2}]},"request_id":"9"}
+{"status":200,"response":{"data":{"communities":[{"members":2,"name":"erlang"}]},"request_id":"9"}}
+CLIENT_PROCESS os_pid=80726 user=alice command=["post","erlang","Hello REST"]
+CLIENT POST http://127.0.0.1:56903/api/v1/posts user=alice
+HTTP id=11 method=POST path=/api/v1/posts user=alice status=201 elapsed_us=52
+CLIENT status=201 body={"data":{"id":1},"request_id":"11"}
+{"status":201,"response":{"data":{"id":1},"request_id":"11"}}
+CLIENT_PROCESS os_pid=80744 user=bob command=["comment","1","Root comment"]
+CLIENT POST http://127.0.0.1:56903/api/v1/posts/1/comments user=bob
+HTTP id=13 method=POST path=/api/v1/posts/1/comments user=bob status=201 elapsed_us=49
+CLIENT status=201 body={"data":{"id":2},"request_id":"13"}
+{"status":201,"response":{"data":{"id":2},"request_id":"13"}}
+CLIENT_PROCESS os_pid=80764 user=alice command=["comment","1","Nested reply",
+                                                "2"]
+CLIENT POST http://127.0.0.1:56903/api/v1/posts/1/comments user=alice
+HTTP id=15 method=POST path=/api/v1/posts/1/comments user=alice status=201 elapsed_us=39
+CLIENT status=201 body={"data":{"id":3},"request_id":"15"}
+{"status":201,"response":{"data":{"id":3},"request_id":"15"}}
+CLIENT_PROCESS os_pid=80779 user=bob command=["thread","1"]
+CLIENT GET http://127.0.0.1:56903/api/v1/posts/1/comments user=bob
+HTTP id=17 method=GET path=/api/v1/posts/1/comments user=bob status=200 elapsed_us=40
+CLIENT status=200 body={"data":{"comments":[{"id":2,"parent":null,"text":"Root comment","author":"bob","post":1,"score":0},{"id":3,"parent":2,"text":"Nested reply","author":"alice","post":1,"score":0}]},"request_id":"17"}
+{"status":200,"response":{"data":{"comments":[{"author":"bob","id":2,"parent":null,"post":1,"score":0,"text":"Root comment"},{"author":"alice","id":3,"parent":2,"post":1,"score":0,"text":"Nested reply"}]},"request_id":"17"}}
+CLIENT_PROCESS os_pid=80794 user=bob command=["vote","post","1","1"]
+CLIENT_PROCESS os_pid=80795 user=bob command=["vote","post","1","1"]
+CLIENT PUT http://127.0.0.1:56903/api/v1/posts/1/vote user=bob
+HTTP id=19 method=PUT path=/api/v1/posts/1/vote user=bob status=200 elapsed_us=38
+HTTP id=20 method=PUT path=/api/v1/posts/1/vote user=bob status=200 elapsed_us=27
+CLIENT status=200 body={"data":{"score":1},"request_id":"19"}
+{"status":200,"response":{"data":{"score":1},"request_id":"19"}}
+CLIENT PUT http://127.0.0.1:56903/api/v1/posts/1/vote user=bob
+CLIENT status=200 body={"data":{"score":1},"request_id":"20"}
+{"status":200,"response":{"data":{"score":1},"request_id":"20"}}
+CLIENT_PROCESS os_pid=80825 user=alice command=["vote","comment","2","1"]
+CLIENT PUT http://127.0.0.1:56903/api/v1/comments/2/vote user=alice
+HTTP id=23 method=PUT path=/api/v1/comments/2/vote user=alice status=200 elapsed_us=28
+CLIENT status=200 body={"data":{"score":1},"request_id":"23"}
+{"status":200,"response":{"data":{"score":1},"request_id":"23"}}
+CLIENT_PROCESS os_pid=80847 user=bob command=["karma","alice"]
+CLIENT GET http://127.0.0.1:56903/api/v1/users/alice/karma user=bob
+HTTP id=25 method=GET path=/api/v1/users/alice/karma user=bob status=200 elapsed_us=33
+CLIENT status=200 body={"data":{"score":1},"request_id":"25"}
+{"status":200,"response":{"data":{"score":1},"request_id":"25"}}
+CLIENT_PROCESS os_pid=80883 user=alice command=["karma","bob"]
+CLIENT GET http://127.0.0.1:56903/api/v1/users/bob/karma user=alice
+HTTP id=27 method=GET path=/api/v1/users/bob/karma user=alice status=200 elapsed_us=28
+CLIENT status=200 body={"data":{"score":1},"request_id":"27"}
+{"status":200,"response":{"data":{"score":1},"request_id":"27"}}
+CLIENT_PROCESS os_pid=80898 user=bob command=["post","erlang",
+                                              "Repost via HTTP","1"]
+CLIENT POST http://127.0.0.1:56903/api/v1/posts user=bob
+HTTP id=29 method=POST path=/api/v1/posts user=bob status=201 elapsed_us=42
+CLIENT status=201 body={"data":{"id":4},"request_id":"29"}
+{"status":201,"response":{"data":{"id":4},"request_id":"29"}}
+CLIENT_PROCESS os_pid=80916 user=bob command=["get","1"]
+CLIENT GET http://127.0.0.1:56903/api/v1/posts/1 user=bob
+HTTP id=31 method=GET path=/api/v1/posts/1 user=bob status=200 elapsed_us=34
+CLIENT status=200 body={"data":{"post":{"id":1,"text":"Hello REST","author":"alice","original":null,"community":"erlang","score":1}},"request_id":"31"}
+{"status":200,"response":{"data":{"post":{"author":"alice","community":"erlang","id":1,"original":null,"score":1,"text":"Hello REST"}},"request_id":"31"}}
+CLIENT_PROCESS os_pid=80934 user=bob command=["feed","1"]
+CLIENT GET http://127.0.0.1:56903/api/v1/feed?limit=1 user=bob
+HTTP id=33 method=GET path=/api/v1/feed?limit=1 user=bob status=200 elapsed_us=51
+CLIENT status=200 body={"data":{"posts":[{"id":4,"text":"Repost via HTTP","author":"bob","original":1,"community":"erlang","score":0}]},"request_id":"33"}
+{"status":200,"response":{"data":{"posts":[{"author":"bob","community":"erlang","id":4,"original":1,"score":0,"text":"Repost via HTTP"}]},"request_id":"33"}}
+CLIENT_PROCESS os_pid=80951 user=bob command=["feed","20","4"]
+CLIENT GET http://127.0.0.1:56903/api/v1/feed?limit=20&before=4 user=bob
+HTTP id=35 method=GET path=/api/v1/feed?limit=20&before=4 user=bob status=200 elapsed_us=40
+CLIENT status=200 body={"data":{"posts":[{"id":1,"text":"Hello REST","author":"alice","original":null,"community":"erlang","score":1}]},"request_id":"35"}
+{"status":200,"response":{"data":{"posts":[{"author":"alice","community":"erlang","id":1,"original":null,"score":1,"text":"Hello REST"}]},"request_id":"35"}}
+CLIENT_PROCESS os_pid=80967 user=bob command=["search","rest"]
+CLIENT GET http://127.0.0.1:56903/api/v1/search?q=rest user=bob
+HTTP id=37 method=GET path=/api/v1/search?q=rest user=bob status=200 elapsed_us=46
+CLIENT status=200 body={"data":{"posts":[{"id":1,"text":"Hello REST","author":"alice","original":null,"community":"erlang","score":1}]},"request_id":"37"}
+{"status":200,"response":{"data":{"posts":[{"author":"alice","community":"erlang","id":1,"original":null,"score":1,"text":"Hello REST"}]},"request_id":"37"}}
+CLIENT_PROCESS os_pid=80983 user=bob command=["online","false"]
+CLIENT PUT http://127.0.0.1:56903/api/v1/users/bob/online user=bob
+HTTP id=39 method=PUT path=/api/v1/users/bob/online user=bob status=200 elapsed_us=46
+CLIENT status=200 body={"data":{"ok":true},"request_id":"39"}
+{"status":200,"response":{"data":{"ok":true},"request_id":"39"}}
+CLIENT_PROCESS os_pid=80999 user=alice command=["send","bob",
+                                                "Delivered while offline"]
+CLIENT POST http://127.0.0.1:56903/api/v1/messages user=alice
+HTTP id=41 method=POST path=/api/v1/messages user=alice status=201 elapsed_us=39
+CLIENT status=201 body={"data":{"id":5},"request_id":"41"}
+{"status":201,"response":{"data":{"id":5},"request_id":"41"}}
+CLIENT_PROCESS os_pid=81014 user=bob command=["online","true"]
+CLIENT PUT http://127.0.0.1:56903/api/v1/users/bob/online user=bob
+HTTP id=43 method=PUT path=/api/v1/users/bob/online user=bob status=200 elapsed_us=29
+CLIENT status=200 body={"data":{"ok":true},"request_id":"43"}
+{"status":200,"response":{"data":{"ok":true},"request_id":"43"}}
+CLIENT_PROCESS os_pid=81029 user=bob command=["inbox"]
+CLIENT GET http://127.0.0.1:56903/api/v1/inbox user=bob
+HTTP id=45 method=GET path=/api/v1/inbox user=bob status=200 elapsed_us=52
+CLIENT status=200 body={"data":{"messages":[{"id":5,"parent":null,"text":"Delivered while offline","recipient":"bob","sender":"alice"}]},"request_id":"45"}
+{"status":200,"response":{"data":{"messages":[{"id":5,"parent":null,"recipient":"bob","sender":"alice","text":"Delivered while offline"}]},"request_id":"45"}}
+CLIENT_PROCESS os_pid=81044 user=bob command=["reply","5","Received!"]
+CLIENT POST http://127.0.0.1:56903/api/v1/messages/5/replies user=bob
+HTTP id=47 method=POST path=/api/v1/messages/5/replies user=bob status=201 elapsed_us=91
+CLIENT status=201 body={"data":{"id":6},"request_id":"47"}
+{"status":201,"response":{"data":{"id":6},"request_id":"47"}}
+CLIENT_PROCESS os_pid=81059 user=alice command=["inbox"]
+CLIENT GET http://127.0.0.1:56903/api/v1/inbox user=alice
+HTTP id=49 method=GET path=/api/v1/inbox user=alice status=200 elapsed_us=32
+CLIENT status=200 body={"data":{"messages":[{"id":6,"parent":5,"text":"Received!","recipient":"alice","sender":"bob"}]},"request_id":"49"}
+{"status":200,"response":{"data":{"messages":[{"id":6,"parent":5,"recipient":"alice","sender":"bob","text":"Received!"}]},"request_id":"49"}}
+CLIENT_PROCESS os_pid=81074 user=bob command=["leave","erlang"]
+CLIENT DELETE http://127.0.0.1:56903/api/v1/subreddits/erlang/subscription user=bob
+HTTP id=51 method=DELETE path=/api/v1/subreddits/erlang/subscription user=bob status=200 elapsed_us=31
+CLIENT status=200 body={"data":{"ok":true},"request_id":"51"}
+{"status":200,"response":{"data":{"ok":true},"request_id":"51"}}
+CLIENT_PROCESS os_pid=81089 user=bob command=["join","erlang"]
+CLIENT PUT http://127.0.0.1:56903/api/v1/subreddits/erlang/subscription user=bob
+HTTP id=53 method=PUT path=/api/v1/subreddits/erlang/subscription user=bob status=200 elapsed_us=32
+CLIENT status=200 body={"data":{"ok":true},"request_id":"53"}
+{"status":200,"response":{"data":{"ok":true},"request_id":"53"}}
+HTTP id=55 method=GET path=/api/v1/users/alice/karma user=bob status=200 elapsed_us=16
+DEMO PASS mode=base server_os_pid=80617 (independent CLI OS processes shown above)

@@ -1,0 +1,6 @@
+build/
+*.zip
+*.tgz
+*.pem
+*.mp4
+erl_crash.dump

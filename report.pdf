@@ -1,0 +1,661 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [6 0 R 8 0 R 10 0 R 13 0 R 15 0 R 17 0 R 24 0 R] /Count 7 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+5 0 obj
+<< /Length 1513 >>
+stream
+BT
+/F2 13 Tf
+48 751 Td
+(Project 4.2: Reddit REST API and Digital Signatures) Tj
+ET
+BT
+/F1 10 Tf
+12 TL
+48 725 Td
+(Group members:) Tj
+T*
+() Tj
+T*
+(Harsha Karimikonda | hkarimkonda@ufl.edu | UFID 50966091) Tj
+T*
+() Tj
+T*
+(Venkatesh Gollepalli | ve.gollepalli@ufl.edu | UFID 24690032) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Main demonstration YouTube link: PENDING - add your uploaded video link) Tj
+T*
+() Tj
+T*
+(Separate bonus demonstration YouTube link: PENDING - add your uploaded video link) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(This project extends our Project 4.1 Erlang/OTP Reddit engine with a JSON REST API and) Tj
+T*
+(independent Erlang CLI clients. The optional bonus registers public keys, signs every post,) Tj
+T*
+(and verifies post integrity both at the server and on clients.) Tj
+T*
+() Tj
+T*
+(Implementation uses OTP libraries only: inets HTTP server/client, built-in JSON,) Tj
+T*
+(gen_server/supervisor, public_key, and crypto. Python standard-library scripts generate this) Tj
+T*
+(PDF and the submission ZIP archives; they are not part of the engine or client runtime.) Tj
+T*
+() Tj
+T*
+(Deliverables: project4.zip, project4-bonus.zip, and this separate report.pdf. The group must) Tj
+T*
+(add the actual main and bonus MP4 recordings and replace pending links before final) Tj
+T*
+(submission.) Tj
+T*
+() Tj
+T*
+(Due date supplied in the assignment: December 13 at midnight. The group should use the exact) Tj
+T*
+(deadline shown in Canvas.) Tj
+T*
+() Tj
+T*
+ET
+BT
+/F1 9 Tf
+48 35 Td
+(Project 4.2 | Page 1 of 7) Tj
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 5 0 R >>
+endobj
+7 0 obj
+<< /Length 1806 >>
+stream
+BT
+/F2 13 Tf
+48 751 Td
+(Architecture and state model) Tj
+ET
+BT
+/F1 10 Tf
+12 TL
+48 725 Td
+(Request flow: independent Erlang CLI OS process -> httpc -> HTTP/JSON -> inets:httpd request) Tj
+T*
+(callback -> reddit_server gen_server -> reddit_engine pure state transition -> JSON) Tj
+T*
+(response.) Tj
+T*
+() Tj
+T*
+(reddit_sup supervises the authoritative engine server. Its serialized transitions keep post) Tj
+T*
+(IDs, votes, scores, karma, memberships, messages, and signatures consistent. HTTP connection) Tj
+T*
+(processes call the same engine with a five-second timeout.) Tj
+T*
+() Tj
+T*
+(Each CLI uses only REST for user operations. The demo prints client OS PIDs and launches) Tj
+T*
+(concurrent clients to exercise shared server state. There is no Erlang distribution) Tj
+T*
+(requirement for REST clients.) Tj
+T*
+() Tj
+T*
+(Engine state uses indexed maps for users, communities, subscriptions, posts, community) Tj
+T*
+(posts, comments, thread relationships, votes, and inboxes. All content receives increasing) Tj
+T*
+(global IDs.) Tj
+T*
+() Tj
+T*
+(The server defaults to 127.0.0.1:8080. Address, port, and base/bonus mode are configurable.) Tj
+T*
+(inets supervises the HTTP service. Engine state is intentionally in memory; server or engine) Tj
+T*
+(restart loses data.) Tj
+T*
+() Tj
+T*
+(Identity follows the existing engine: clients supply trusted X-User usernames. Registration) Tj
+T*
+(needs no password. Caller checks protect operations relative to that supplied identity; this) Tj
+T*
+(is not real authentication.) Tj
+T*
+() Tj
+T*
+(The implementation adds case-insensitive Unicode substring search over post text and) Tj
+T*
+(community names, community listing, and single-post retrieval to support an end-to-end) Tj
+T*
+(demonstration.) Tj
+T*
+() Tj
+T*
+ET
+BT
+/F1 9 Tf
+48 35 Td
+(Project 4.2 | Page 2 of 7) Tj
+ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 7 0 R >>
+endobj
+9 0 obj
+<< /Length 2528 >>
+stream
+BT
+/F2 13 Tf
+48 751 Td
+(REST interface and behavior) Tj
+ET
+BT
+/F1 10 Tf
+12 TL
+48 725 Td
+(All application endpoints use /api/v1. Requests/responses are JSON. Success has data and) Tj
+T*
+(request_id fields; failure has error and request_id. Created objects return data.id. Lists) Tj
+T*
+(use data.posts, data.comments, or data.messages.) Tj
+T*
+() Tj
+T*
+(POST /users registers username and, for bonus mode, a PEM public_key. GET /users/:name/karma) Tj
+T*
+(returns received vote total. PUT /users/:name/online updates only the caller. GET) Tj
+T*
+(/users/:name/public-key returns the registered key.) Tj
+T*
+() Tj
+T*
+(GET/POST /subreddits lists/creates communities. PUT/DELETE /subreddits/:name/subscription) Tj
+T*
+(joins/leaves. Creating a community also joins its creator.) Tj
+T*
+() Tj
+T*
+(POST /posts creates text posts or reposts with community, text, and optional original ID.) Tj
+T*
+(GET /posts/:id downloads a post. GET/POST /posts/:id/comments reads the thread or adds) Tj
+T*
+(comments with optional parent ID.) Tj
+T*
+() Tj
+T*
+(PUT /posts/:id/vote and /comments/:id/vote set direction to -1, 0, or 1. A repeated vote is) Tj
+T*
+(idempotent; changing direction updates author karma by the delta. Self-votes are forbidden.) Tj
+T*
+() Tj
+T*
+(GET /feed returns posts in joined communities. GET /search?q=... searches globally visible) Tj
+T*
+(posts. Feed/search/inbox use descending IDs, optional exclusive before cursor, and limit) Tj
+T*
+(1-100 \(default 20\). Thread comments return creation order with parent IDs.) Tj
+T*
+() Tj
+T*
+(POST /messages sends to a recipient, including offline recipients. POST) Tj
+T*
+(/messages/:id/replies permits only the recipient to reply. GET /inbox returns only the) Tj
+T*
+(caller's received messages. Reconnect preserves subscriptions and messages.) Tj
+T*
+() Tj
+T*
+(Statuses: 200 reads/updates; 201 creation; 400 invalid requests/keys/signatures; 403) Tj
+T*
+(forbidden/offline; 404 missing; 405 unsupported method; 409 duplicate; 422 download) Tj
+T*
+(integrity failure; 503 engine unavailable; 504 engine timeout.) Tj
+T*
+() Tj
+T*
+(Names/text must be nonempty UTF-8 after trimming and at most 10,000 bytes. Request bodies) Tj
+T*
+(are capped at 64 KiB. Malformed JSON, IDs, or limits receive errors without crashing the) Tj
+T*
+(HTTP service. Mutations are never automatically retried.) Tj
+T*
+() Tj
+T*
+(The README provides exact methods, JSON fields, CLI commands, curl examples, and response) Tj
+T*
+(shapes for every resource.) Tj
+T*
+() Tj
+T*
+ET
+BT
+/F1 9 Tf
+48 35 Td
+(Project 4.2 | Page 3 of 7) Tj
+ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 9 0 R >>
+endobj
+11 0 obj
+<< /Length 1881 >>
+stream
+BT
+/F2 13 Tf
+48 751 Td
+(Running and demonstrating the project) Tj
+ET
+BT
+/F1 10 Tf
+12 TL
+48 725 Td
+(Install Erlang/OTP 27+ with compiler, development headers, EUnit, inets, public_key, and) Tj
+T*
+(crypto. Put escript on PATH. The scripts/project4 launcher also recognizes a user-local) Tj
+T*
+(Erlang installation. Use Python 3 only for report/package commands.) Tj
+T*
+() Tj
+T*
+(Build and run: ./scripts/project4 build; ./scripts/project4 test; ./scripts/project4 server) Tj
+T*
+(--mode base. Use separate terminals for Alice and Bob.) Tj
+T*
+() Tj
+T*
+(Alice: ./scripts/project4 client --user alice --verbose register alice; then create erlang;) Tj
+T*
+(then post erlang "Hello REST" using the same client prefix.) Tj
+T*
+() Tj
+T*
+(Bob: register bob; join erlang; feed; search REST; vote post 1 1. Alice or Bob can inspect) Tj
+T*
+(karma alice. Comments support arbitrary nesting via parent IDs.) Tj
+T*
+() Tj
+T*
+(Use --url http://127.0.0.1:8081 for another port. The interactive shell accepts JSON arrays) Tj
+T*
+(of command arguments, such as ["feed"] or ["post","erlang","Hello"].) Tj
+T*
+() Tj
+T*
+(Automated multi-process demos: ./scripts/project4 demo base and ./scripts/project4 demo) Tj
+T*
+(bonus. Each starts a fresh ephemeral server, launches independent client OS processes, runs) Tj
+T*
+(all supported features, and asserts concurrent repeated votes preserve karma one.) Tj
+T*
+() Tj
+T*
+(Server logs include request ID, method, path, username, status, and elapsed microseconds.) Tj
+T*
+(Verbose clients print the actual HTTP method/URL and returned status/JSON, including) Tj
+T*
+(matching request IDs.) Tj
+T*
+() Tj
+T*
+(docs/VIDEO_GUIDE.md contains a timed approximately five-minute main demo, exact commands and) Tj
+T*
+(expected IDs, narration, a separate bonus walkthrough, and recording/upload instructions.) Tj
+T*
+() Tj
+T*
+ET
+BT
+/F1 9 Tf
+48 35 Td
+(Project 4.2 | Page 4 of 7) Tj
+ET
+endstream
+endobj
+12 0 obj
+<< /Type /Annot /Subtype /Link /Rect [48 567 565 579] /Border [0 0 0] /A << /S /URI /URI (http://127.0.0.1:8081) >> >>
+endobj
+13 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 11 0 R /Annots [12 0 R] >>
+endobj
+14 0 obj
+<< /Length 2205 >>
+stream
+BT
+/F2 13 Tf
+48 751 Td
+(Bonus signature design) Tj
+ET
+BT
+/F1 10 Tf
+12 TL
+48 725 Td
+(Client keys use RSA-2048 with public exponent 65537. Signatures use SHA-256 and PKCS#1 v1.5) Tj
+T*
+(through OTP public_key/crypto. Private keys are generated locally with permissions 0600;) Tj
+T*
+(only public keys and post signatures cross the REST API.) Tj
+T*
+() Tj
+T*
+(Registration in bonus mode requires a valid RSA-2048 public key. It is stored with the) Tj
+T*
+(account and cannot be replaced. Other registered online users retrieve it through GET) Tj
+T*
+(/users/:name/public-key.) Tj
+T*
+() Tj
+T*
+(The exact signed bytes are UTF-8 OTP JSON encoding of the fixed ordered array [1, author,) Tj
+T*
+(community, exact_text, original_id_or_null]. Version and fixed field order avoid map-order) Tj
+T*
+(ambiguity. Text is not normalized before signing.) Tj
+T*
+() Tj
+T*
+(The posting CLI reads its private PEM, signs locally, and sends a Base64 signature with the) Tj
+T*
+(post. A repost signs its own author, text, destination community, and source ID.) Tj
+T*
+() Tj
+T*
+(The engine verifies the signature before creating the post and stores post/signature) Tj
+T*
+(atomically. Bonus mode rejects unsigned and invalidly signed posts. Base mode preserves the) Tj
+T*
+(original unsigned behavior.) Tj
+T*
+() Tj
+T*
+(Every post returned through detail, feed, or search is checked on the server. A failure) Tj
+T*
+(produces HTTP 422. The bonus CLI separately fetches each author's public key over HTTP,) Tj
+T*
+(checks each returned post, and prints SIGNATURE verified or fails.) Tj
+T*
+() Tj
+T*
+(Server ID and mutable score are excluded from the signed payload; voting therefore preserves) Tj
+T*
+(content signatures. The signed fields protect content integrity relative to the server-) Tj
+T*
+(provided key. They do not authenticate unsigned operations, provide key certification, or) Tj
+T*
+(prevent replay.) Tj
+T*
+() Tj
+T*
+(Bonus demo: keygen local key directories; start server --mode bonus; register each public) Tj
+T*
+(PEM; post with --key PRIVATE_PEM; read with --bonus and observe key lookup and verification.) Tj
+T*
+(See the video guide for complete commands.) Tj
+T*
+() Tj
+T*
+ET
+BT
+/F1 9 Tf
+48 35 Td
+(Project 4.2 | Page 5 of 7) Tj
+ET
+endstream
+endobj
+15 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 14 0 R >>
+endobj
+16 0 obj
+<< /Length 2316 >>
+stream
+BT
+/F2 13 Tf
+48 751 Td
+(Validation evidence and limitations) Tj
+ET
+BT
+/F1 10 Tf
+12 TL
+48 725 Td
+(Base regression and HTTP suite: 13 tests passed.) Tj
+T*
+() Tj
+T*
+(Bonus suite: Passed \(crypto, engine, HTTP, and independent client checks\).) Tj
+T*
+() Tj
+T*
+(Base multi-process demo: PASS; 27 independent client OS process IDs recorded.) Tj
+T*
+() Tj
+T*
+(Bonus multi-process demo: PASS; 28 independent client OS process IDs recorded.) Tj
+T*
+() Tj
+T*
+(Both extracted archives passed build, applicable tests, and independent-client demos.) Tj
+T*
+() Tj
+T*
+(Evidence is preserved in evidence/base-tests.log, bonus-tests.log, base-demo.log, and bonus-) Tj
+T*
+(demo.log. These are actual executions, not expected-output examples.) Tj
+T*
+() Tj
+T*
+(Base checks cover registration, membership, nested comments, reposts, vote/karma updates,) Tj
+T*
+(pagination, private inboxes, replies, offline delivery, search, malformed input, engine) Tj
+T*
+(timeout \(504\), and unavailable engine \(503\).) Tj
+T*
+() Tj
+T*
+(Bonus checks cover wrong/malformed keys, invalid/missing signatures, changes to all signed) Tj
+T*
+(fields, valid reposts, score changes, server-side tampering on detail/feed/search, and) Tj
+T*
+(independent client rejection of changed downloaded text. Test-only OTP state replacement) Tj
+T*
+(injects corruption; no corruption endpoint is exposed.) Tj
+T*
+() Tj
+T*
+(The local OTP 29.1.2 installation initially lacked crypto. Validation used a locally built) Tj
+T*
+(OTP crypto application linked against OpenSSL 3.5.4 in an excluded build/runtime overlay.) Tj
+T*
+(Submitted sources require a complete OTP installation and contain no native binaries.) Tj
+T*
+() Tj
+T*
+(Limits: in-memory data, single serialized engine bottleneck, trusted identities, no) Tj
+T*
+(TLS/persistence, no replay prevention/key rotation, and no signatures on comments/messages.) Tj
+T*
+(Public-key lookup trusts the server; there is no PKI. This submission makes no new) Tj
+T*
+(performance-capacity claims.) Tj
+T*
+() Tj
+T*
+(Recording and YouTube upload remain group tasks. Add videos/main.mp4 and videos/bonus.mp4,) Tj
+T*
+(enter real links in config/submission.json, regenerate the report, and run package --final.) Tj
+T*
+(Final packaging rejects missing video files or links.) Tj
+T*
+() Tj
+T*
+ET
+BT
+/F1 9 Tf
+48 35 Td
+(Project 4.2 | Page 6 of 7) Tj
+ET
+endstream
+endobj
+17 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 16 0 R >>
+endobj
+18 0 obj
+<< /Length 1560 >>
+stream
+BT
+/F2 13 Tf
+48 751 Td
+(Submission and references) Tj
+ET
+BT
+/F1 10 Tf
+12 TL
+48 725 Td
+(Submit report.pdf separately from both code archives. project4.zip defaults to base mode and) Tj
+T*
+(includes the main MP4 when supplied. project4-bonus.zip defaults to bonus mode and includes) Tj
+T*
+(the separate bonus MP4 when supplied. Each archive is self-contained.) Tj
+T*
+() Tj
+T*
+(Both archives include source, tests, scripts, team configuration, README, video) Tj
+T*
+(documentation, and test/demo evidence. They exclude this report PDF, private PEM files,) Tj
+T*
+(runtime/build artifacts, and Project 4.1 benchmark results.) Tj
+T*
+() Tj
+T*
+(SUBMISSION_COMMENT.txt is generated from the two members' configuration and video links.) Tj
+T*
+(Paste it into the single group Canvas submission. Pending links are explicitly marked rather) Tj
+T*
+(than invented.) Tj
+T*
+() Tj
+T*
+(Main video: PENDING - add your uploaded video link) Tj
+T*
+() Tj
+T*
+(Bonus video: PENDING - add your uploaded video link) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(References:) Tj
+T*
+() Tj
+T*
+(OTP HTTP server callback interface: https://www.erlang.org/doc/apps/inets/httpd.html) Tj
+T*
+() Tj
+T*
+(OTP HTTP client: https://www.erlang.org/doc/apps/inets/httpc.html) Tj
+T*
+() Tj
+T*
+(OTP public-key library: https://www.erlang.org/doc/apps/public_key/public_key.html) Tj
+T*
+() Tj
+T*
+(OTP gen_server: https://www.erlang.org/doc/apps/stdlib/gen_server.html) Tj
+T*
+() Tj
+T*
+(Reddit API structure reference: https://www.reddit.com/dev/api/) Tj
+T*
+() Tj
+T*
+ET
+BT
+/F1 9 Tf
+48 35 Td
+(Project 4.2 | Page 7 of 7) Tj
+ET
+endstream
+endobj
+19 0 obj
+<< /Type /Annot /Subtype /Link /Rect [48 483 565 495] /Border [0 0 0] /A << /S /URI /URI (https://www.erlang.org/doc/apps/inets/httpd.html) >> >>
+endobj
+20 0 obj
+<< /Type /Annot /Subtype /Link /Rect [48 459 565 471] /Border [0 0 0] /A << /S /URI /URI (https://www.erlang.org/doc/apps/inets/httpc.html) >> >>
+endobj
+21 0 obj
+<< /Type /Annot /Subtype /Link /Rect [48 435 565 447] /Border [0 0 0] /A << /S /URI /URI (https://www.erlang.org/doc/apps/public_key/public_key.html) >> >>
+endobj
+22 0 obj
+<< /Type /Annot /Subtype /Link /Rect [48 411 565 423] /Border [0 0 0] /A << /S /URI /URI (https://www.erlang.org/doc/apps/stdlib/gen_server.html) >> >>
+endobj
+23 0 obj
+<< /Type /Annot /Subtype /Link /Rect [48 387 565 399] /Border [0 0 0] /A << /S /URI /URI (https://www.reddit.com/dev/api/) >> >>
+endobj
+24 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 18 0 R /Annots [19 0 R 20 0 R 21 0 R 22 0 R 23 0 R] >>
+endobj
+xref
+0 25
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000162 00000 n 
+0000000232 00000 n 
+0000000307 00000 n 
+0000001872 00000 n 
+0000002008 00000 n 
+0000003866 00000 n 
+0000004002 00000 n 
+0000006582 00000 n 
+0000006719 00000 n 
+0000008653 00000 n 
+0000008788 00000 n 
+0000008943 00000 n 
+0000011201 00000 n 
+0000011339 00000 n 
+0000013708 00000 n 
+0000013846 00000 n 
+0000015459 00000 n 
+0000015621 00000 n 
+0000015783 00000 n 
+0000015955 00000 n 
+0000016123 00000 n 
+0000016268 00000 n 
+trailer
+<< /Size 25 /Root 1 0 R >>
+startxref
+16451
+%%EOF

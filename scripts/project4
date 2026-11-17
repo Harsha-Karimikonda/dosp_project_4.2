@@ -1,0 +1,10 @@
+#!/bin/sh
+# Prefer an installed toolchain; accommodate a user-local Erlang installation.
+if command -v escript >/dev/null 2>&1; then
+  exec escript "$(dirname "$0")/project4.escript" "$@"
+elif [ -x "$HOME/.local/bin/escript" ]; then
+  exec "$HOME/.local/bin/escript" "$(dirname "$0")/project4.escript" "$@"
+else
+  echo 'Install Erlang/OTP 27+ (including inets, eunit, crypto, public_key), and put escript on PATH.' >&2
+  exit 1
+fi

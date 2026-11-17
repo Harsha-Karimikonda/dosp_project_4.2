@@ -1,0 +1,4 @@
+{application,reddit,[{description,"Reddit REST engine and CLI"},{vsn,"2.0.0"},
+ {registered,[reddit_sup,reddit_server]},{mod,{reddit_app,[]}},
+ {applications,[kernel,stdlib,inets]},{env,[]},
+ {modules,[reddit_app,reddit_sup,reddit_server,reddit_engine,reddit_crypto,reddit_http,reddit_cli,reddit_demo,reddit_tools]}]}.

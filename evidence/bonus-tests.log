@@ -1,0 +1,26 @@
+======================== EUnit ========================
+reddit_bonus_tests: checks (module 'reddit_bonus_tests')...HTTP id=1 method=POST path=/api/v1/users user=alice status=400 elapsed_us=21
+HTTP id=2 method=POST path=/api/v1/users user=alice status=201 elapsed_us=31
+HTTP id=3 method=POST path=/api/v1/users user=alice status=409 elapsed_us=21
+HTTP id=4 method=GET path=/api/v1/users/alice/public-key user=alice status=200 elapsed_us=8
+HTTP id=5 method=POST path=/api/v1/subreddits user=alice status=201 elapsed_us=9
+HTTP id=6 method=POST path=/api/v1/posts user=alice status=400 elapsed_us=3
+HTTP id=7 method=POST path=/api/v1/posts user=alice status=400 elapsed_us=20
+HTTP id=8 method=POST path=/api/v1/posts user=alice status=201 elapsed_us=80
+HTTP id=9 method=POST path=/api/v1/posts user=alice status=400 elapsed_us=55
+HTTP id=10 method=POST path=/api/v1/posts user=alice status=201 elapsed_us=50
+HTTP id=11 method=GET path=/api/v1/posts/1 user=alice status=200 elapsed_us=52
+HTTP id=12 method=GET path=/api/v1/posts/1 user=alice status=200 elapsed_us=39
+HTTP id=13 method=GET path=/api/v1/users/alice/public-key user=alice status=200 elapsed_us=7
+HTTP id=14 method=GET path=/api/v1/users/alice/public-key user=alice status=200 elapsed_us=6
+HTTP id=15 method=GET path=/api/v1/posts/1 user=alice status=422 elapsed_us=64
+HTTP id=16 method=GET path=/api/v1/feed user=alice status=422 elapsed_us=44
+HTTP id=17 method=GET path=/api/v1/search?q=tampered user=alice status=422 elapsed_us=53
+=INFO REPORT==== 17-Nov-2026::13:08:24.617537 ===
+    application: reddit
+    exited: stopped
+    type: temporary
+
+[0.176 s] ok
+=======================================================
+  Test passed.
