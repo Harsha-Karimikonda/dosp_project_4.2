@@ -20,8 +20,6 @@ base_tests = evidence('base-tests.log')
 bonus_tests = evidence('bonus-tests.log')
 base_demo = evidence('base-demo.log')
 bonus_demo = evidence('bonus-demo.log')
-archive_log = evidence('archive-validation.log')
-archive_summary = 'Both extracted archives passed build, applicable tests, and independent-client demos.' if all(f'ARCHIVE PASS {name}' in archive_log for name in ('project4.zip', 'project4-bonus.zip')) else 'Extracted archive validation not yet recorded.'
 base_status = re.search(r'All (\d+) tests passed\.', base_tests)
 base_summary = f'{base_status.group(1)} tests passed' if base_status else 'Not verified: inspect evidence/base-tests.log'
 bonus_summary = 'Passed (crypto, engine, HTTP, and independent client checks)' if 'Test passed.' in bonus_tests and '*failed*' not in bonus_tests else 'Not verified: inspect evidence/bonus-tests.log'
@@ -90,7 +88,6 @@ sections = [
     'Bonus suite: ' + bonus_summary + '.',
     'Base multi-process demo: ' + demo_summary(base_demo, 'base') + '.',
     'Bonus multi-process demo: ' + demo_summary(bonus_demo, 'bonus') + '.',
-    archive_summary,
     'Evidence is preserved in evidence/base-tests.log, bonus-tests.log, base-demo.log, and bonus-demo.log. These are actual executions, not expected-output examples.',
     'Base checks cover registration, membership, nested comments, reposts, vote/karma updates, pagination, private inboxes, replies, offline delivery, search, malformed input, engine timeout (504), and unavailable engine (503).',
     'Bonus checks cover wrong/malformed keys, invalid/missing signatures, changes to all signed fields, valid reposts, score changes, server-side tampering on detail/feed/search, and independent client rejection of changed downloaded text. Test-only OTP state replacement injects corruption; no corruption endpoint is exposed.',
@@ -113,9 +110,6 @@ sections = [
     'Reddit API structure reference: https://www.reddit.com/dev/api/'
 ])]
 
-# Also preserve readable report source for review/editing.
-markdown = '\n\n'.join('## ' + title + '\n\n' + '\n\n'.join(paragraphs) for title, paragraphs in sections)
-(ROOT / 'docs/REPORT.md').write_text(markdown + '\n')
 comment = 'Project 4.2 group submission\n\n' + '\n'.join(f'{n} | {e} | UFID {u}' for n, e, u in members)
 comment += '\n\nMain demo YouTube: ' + links['main'] + '\nBonus demo YouTube: ' + links['bonus']
 comment += '\n\nAttachments: report.pdf (separate), project4.zip, project4-bonus.zip.\n'
@@ -172,6 +166,6 @@ for offset in offsets[1:]:
     pdf += f'{offset:010d} 00000 n \n'.encode()
 pdf += f'trailer\n<< /Size {len(objects)+1} /Root {catalog} 0 R >>\nstartxref\n{xref}\n%%EOF\n'.encode()
 (ROOT / 'report.pdf').write_bytes(pdf)
-print(f'Generated report.pdf ({len(pages)} pages), docs/REPORT.md, and SUBMISSION_COMMENT.txt')
+print(f'Generated report.pdf ({len(pages)} pages), and SUBMISSION_COMMENT.txt')
 if any('PENDING' in v for v in links.values()):
     print('YouTube links are pending: update config/submission.json after recording.')

@@ -437,7 +437,7 @@ endobj
 << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 14 0 R >>
 endobj
 16 0 obj
-<< /Length 2316 >>
+<< /Length 2213 >>
 stream
 BT
 /F2 13 Tf
@@ -461,10 +461,6 @@ T*
 () Tj
 T*
 (Bonus multi-process demo: PASS; 28 independent client OS process IDs recorded.) Tj
-T*
-() Tj
-T*
-(Both extracted archives passed build, applicable tests, and independent-client demos.) Tj
 T*
 () Tj
 T*
@@ -646,16 +642,16 @@ xref
 0000008943 00000 n 
 0000011201 00000 n 
 0000011339 00000 n 
-0000013708 00000 n 
-0000013846 00000 n 
-0000015459 00000 n 
-0000015621 00000 n 
-0000015783 00000 n 
-0000015955 00000 n 
-0000016123 00000 n 
-0000016268 00000 n 
+0000013605 00000 n 
+0000013743 00000 n 
+0000015356 00000 n 
+0000015518 00000 n 
+0000015680 00000 n 
+0000015852 00000 n 
+0000016020 00000 n 
+0000016165 00000 n 
 trailer
 << /Size 25 /Root 1 0 R >>
 startxref
-16451
+16348
 %%EOF
